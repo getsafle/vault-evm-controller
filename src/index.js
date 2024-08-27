@@ -2,6 +2,10 @@ const { EventEmitter } = require("events");
 const log = require("loglevel");
 const ethUtil = require("ethereumjs-util");
 const Tx = require("ethereumjs-tx");
+const { FeeMarketEIP1559Transaction } = require("@ethereumjs/tx");
+const Common = require("@ethereumjs/common").default;
+const { Hardfork } = require("@ethereumjs/common");
+const { bufferToHex } = require("ethereumjs-util");
 
 const bip39 = require("bip39");
 const ObservableStore = require("obs-store");
@@ -10,7 +14,8 @@ const { normalize: normalizeAddress } = require("eth-sig-util");
 
 const SimpleKeyring = require("eth-simple-keyring");
 const HdKeyring = require("eth-hd-keyring");
-
+const axios = require("axios");
+const { GAS_FEE_API_ETH } = require("./constants/index");
 const keyringTypes = [SimpleKeyring, HdKeyring];
 
 class KeyringController extends EventEmitter {
