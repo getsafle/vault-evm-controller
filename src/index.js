@@ -266,6 +266,40 @@ class KeyringController extends EventEmitter {
     });
   }
 
+  async signTransactionTxType0(rawTx, privateKey) {
+    const tx = new Tx(rawTx);
+
+    const pkey = Buffer.from(privateKey, "hex");
+
+    tx.sign(pkey);
+
+    const signedTx = `0x${tx.serialize().toString("hex")}`;
+
+    return signedTx;
+  }
+
+  async signTransactionTxType2(rawTx, privateKey) {
+    const pkey = Buffer.from(privateKey, "hex");
+
+    const tx = FeeMarketEIP1559Transaction.fromTxData(rawTx);
+
+    const signedTransaction = tx.sign(pkey);
+
+    const signedTx = bufferToHex(signedTransaction.serialize());
+
+    return signedTx;
+  }
+
+  async signTransaction(rawTx, privateKey) {
+    if (this.txType == 0) {
+      let signedTx = await this.signTransactionTxType0(rawTx, privateKey);
+      return signedTx;
+    } else {
+      let signedTx = await this.signTransactionTxType2(rawTx, privateKey);
+      return signedTx;
+    }
+  }
+
   /**
    * Sign Typed Data
    * (EIP712 https://github.com/ethereum/EIPs/pull/712#issuecomment-329988454)
