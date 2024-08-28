@@ -1,7 +1,7 @@
 {
   "name": "@getsafle/vault-evm-controller",
   "version": "1.0.0",
-  "description": "Ethereum controller for safle vault.",
+  "description": "Evm chains controller for safle vault.",
   "main": "src/index.js",
   "scripts": {
     "test-audit": "npm audit",
@@ -20,8 +20,8 @@
   "license": "MIT",
   "contributors": [
     {
-      "name": "Arjun",
-      "email": "arjun@getsafle.com"
+      "name": "Husien",
+      "email": "husien@getsafle.com"
     }
   ],
   "keywords": [
@@ -30,7 +30,7 @@
     "web3",
     "eth"
   ],
-  "homepage": "https://github.com/getsafle/vault-eth-controller#readme",
+  "homepage": "https://github.com/getsafle/vault-evm-controller#readme",
   "devDependencies": {
     "eslint-plugin-mocha": "^8.0.0",
     "mocha": "^8.1.3",
