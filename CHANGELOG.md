@@ -4,3 +4,4 @@
 -Implement keyring mangament for evm controller.
 -Implement get native token balance.
 -Implement broadcast transaction.
+-Implement sign message.
