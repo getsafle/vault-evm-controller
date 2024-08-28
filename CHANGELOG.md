@@ -6,3 +6,4 @@
 -Implemented broadcast transaction.
 -Implemented sign message.
 -Implemented sign transaction.
+-Implemented test cases.

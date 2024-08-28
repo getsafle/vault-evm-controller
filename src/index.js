@@ -1,7 +1,7 @@
 const { EventEmitter } = require("events");
 const log = require("loglevel");
 const ethUtil = require("ethereumjs-util");
-const Tx = require("ethereumjs-tx");
+const Tx = require("ethereumjs-tx").Transaction;
 const { FeeMarketEIP1559Transaction } = require("@ethereumjs/tx");
 const Common = require("@ethereumjs/common").default;
 const { Hardfork } = require("@ethereumjs/common");
@@ -604,9 +604,9 @@ class KeyringController extends EventEmitter {
 
   async getFees(rawTx, web3) {
     if (this.txType == 0) {
-      return await getFeesTxType0(rawTx, web3);
+      return await this.getFeesTxType0(rawTx, web3);
     } else {
-      return await getFeesTxType2(rawTx, web3);
+      return await this.getFeesTxType2(rawTx, web3);
     }
   }
 }
