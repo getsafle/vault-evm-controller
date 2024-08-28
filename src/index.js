@@ -2,6 +2,10 @@ const { EventEmitter } = require("events");
 const log = require("loglevel");
 const ethUtil = require("ethereumjs-util");
 const Tx = require("ethereumjs-tx");
+const { FeeMarketEIP1559Transaction } = require("@ethereumjs/tx");
+const Common = require("@ethereumjs/common").default;
+const { Hardfork } = require("@ethereumjs/common");
+const { bufferToHex } = require("ethereumjs-util");
 
 const bip39 = require("bip39");
 const ObservableStore = require("obs-store");
@@ -10,7 +14,8 @@ const { normalize: normalizeAddress } = require("eth-sig-util");
 
 const SimpleKeyring = require("eth-simple-keyring");
 const HdKeyring = require("eth-hd-keyring");
-
+const axios = require("axios");
+const { GAS_FEE_API_ETH } = require("./constants/index");
 const keyringTypes = [SimpleKeyring, HdKeyring];
 
 class KeyringController extends EventEmitter {
@@ -264,6 +269,40 @@ class KeyringController extends EventEmitter {
     return this.getKeyringForAccount(address).then((keyring) => {
       return keyring.signMessage(address, msgParams.data, opts);
     });
+  }
+
+  async signTransactionTxType0(rawTx, privateKey) {
+    const tx = new Tx(rawTx);
+
+    const pkey = Buffer.from(privateKey, "hex");
+
+    tx.sign(pkey);
+
+    const signedTx = `0x${tx.serialize().toString("hex")}`;
+
+    return signedTx;
+  }
+
+  async signTransactionTxType2(rawTx, privateKey) {
+    const pkey = Buffer.from(privateKey, "hex");
+
+    const tx = FeeMarketEIP1559Transaction.fromTxData(rawTx);
+
+    const signedTransaction = tx.sign(pkey);
+
+    const signedTx = bufferToHex(signedTransaction.serialize());
+
+    return signedTx;
+  }
+
+  async signTransaction(rawTx, privateKey) {
+    if (this.txType == 0) {
+      let signedTx = await this.signTransactionTxType0(rawTx, privateKey);
+      return signedTx;
+    } else {
+      let signedTx = await this.signTransactionTxType2(rawTx, privateKey);
+      return signedTx;
+    }
   }
 
   /**
