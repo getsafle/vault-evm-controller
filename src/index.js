@@ -480,6 +480,12 @@ class KeyringController extends EventEmitter {
     this.emit("unlock");
   }
 
+  /**
+   *
+   * Method to broadcast a transaction
+   *
+   */
+
   async sendTransaction(signedTx, web3) {
     const receipt = await web3.eth.sendSignedTransaction(signedTx);
     return { transactionDetails: receipt.transactionHash };
