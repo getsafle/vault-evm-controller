@@ -2,7 +2,9 @@ const assert = require("assert");
 const Web3 = require("web3");
 const CryptoJS = require("crypto-js");
 const { KeyringController, getBalance } = require("../src");
-
+const crypto = require("crypto");
+const ethUtil = require("ethereumjs-util");
+const sigUtil = require("eth-sig-util");
 const {
   HD_WALLET_12_MNEMONIC,
   EXTERNAL_ACCOUNT_PRIVATE_KEY,
@@ -114,7 +116,15 @@ describe("EVM Controller Tests", () => {
       "Wrong mnemonic"
     );
   });
+  it("should add new account", async () => {
+    await evmController.addNewAccount(evmController.keyrings[0]);
+    const newAccount = evmController.memStore._state.keyrings[0].accounts[1];
 
+    assert(
+      newAccount.toString() === "0x588e8d0598e1bf7bc573291a34995fe43ad3c522",
+      "couldn't add new Account"
+    );
+  });
   it("Should export account (privateKey)", async () => {
     const accounts = await evmController.getAccounts();
 
@@ -239,6 +249,98 @@ describe("EVM Controller Tests", () => {
           privateKey
         );
         assert(signedTX, `Failed to sign transaction for ${chainName}`);
+      });
+      it(`Should sign Message for ${chainName}`, async () => {
+        const accounts = await chainController.getAccounts();
+        const message = `Hello, ${chainName}!`;
+
+        const hash = crypto.createHash("sha256").update(message).digest();
+        const hexData = web3.utils.toHex(hash);
+
+        const msgParams = {
+          from: accounts[0],
+          data: hexData,
+        };
+
+        const raw_sign = await chainController.signMessage(msgParams);
+        // console.log(raw_sign);
+
+        assert(raw_sign, `Failed to Sign Message for ${chainName}`);
+      });
+
+      it(`Should sign and verify Typed Message for ${chainName}`, async () => {
+        const accounts = await chainController.getAccounts();
+
+        // Ensure accounts is not empty
+        if (accounts.length === 0) {
+          throw new Error("No accounts found");
+        }
+
+        // console.log(accounts[0]);
+
+        let msgParams = {
+          from: accounts[0],
+          data: {
+            types: {
+              EIP712Domain: [
+                { name: "name", type: "string" },
+                { name: "version", type: "string" },
+                { name: "chainId", type: "uint256" },
+                { name: "verifyingContract", type: "address" },
+              ],
+              Person: [
+                { name: "name", type: "string" },
+                { name: "wallet", type: "address" },
+              ],
+              Mail: [
+                { name: "from", type: "Person" },
+                { name: "to", type: "Person" },
+                { name: "contents", type: "string" },
+              ],
+            },
+            primaryType: "Mail",
+            domain: {
+              name: "Ether Mail",
+              version: "1",
+              chainId: 1,
+              verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+            },
+            message: {
+              from: {
+                name: "Cow",
+                wallet: "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+              },
+              to: {
+                name: "Bob",
+                wallet: "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+              },
+              contents: "Hello, Bob!",
+            },
+          },
+        };
+
+        const rawSignature = await chainController.signTypedMessage(msgParams);
+        // console.log("Raw signature:", rawSignature);
+
+        // Verify the signature
+        msgParams = { ...msgParams.data, from: msgParams.from };
+        const recoveredAddress = sigUtil.recoverTypedSignature({
+          data: msgParams,
+          sig: rawSignature,
+        });
+
+        // console.log("Recovered address:", recoveredAddress);
+        // console.log("Original address:", msgParams.from);
+
+        // Compare the recovered address with the original signer's address
+        const isSignatureValid =
+          recoveredAddress.toLowerCase() === msgParams.from.toLowerCase();
+
+        assert(
+          isSignatureValid,
+          `Signature verification failed for ${chainName}`
+        );
+        assert(rawSignature, `Failed to Sign Message for ${chainName}`);
       });
     });
   });

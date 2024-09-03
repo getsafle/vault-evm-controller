@@ -312,7 +312,7 @@ class KeyringController extends EventEmitter {
    * @param {Object} msgParams - The message parameters to sign.
    * @returns {Promise<Buffer>} The raw signature.
    */
-  signTypedMessage(msgParams, opts = { version: "V1" }) {
+  signTypedMessage(msgParams, opts = { version: "V4" }) {
     const address = normalizeAddress(msgParams.from);
     return this.getKeyringForAccount(address).then((keyring) => {
       return keyring.signTypedData(address, msgParams.data, opts);
