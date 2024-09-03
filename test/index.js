@@ -302,7 +302,7 @@ describe("EVM Controller Tests", () => {
             domain: {
               name: "Ether Mail",
               version: "1",
-              chainId: 1,
+              chainId: NETWORKS[chainName].CHAIN_ID,
               verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
             },
             message: {
