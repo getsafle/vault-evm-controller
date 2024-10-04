@@ -6,11 +6,15 @@ const { FeeMarketEIP1559Transaction } = require("@ethereumjs/tx");
 const Common = require("@ethereumjs/common").default;
 const { Hardfork } = require("@ethereumjs/common");
 const { bufferToHex } = require("ethereumjs-util");
-
+const { toBuffer } = require("ethereumjs-util");
 const bip39 = require("bip39");
 const ObservableStore = require("obs-store");
 const encryptor = require("browser-passworder");
-const { normalize: normalizeAddress } = require("eth-sig-util");
+const {
+  normalize: normalizeAddress,
+  signTypedData,
+  personalSign,
+} = require("eth-sig-util");
 
 const SimpleKeyring = require("eth-simple-keyring");
 const HdKeyring = require("eth-hd-keyring");
@@ -252,6 +256,7 @@ class KeyringController extends EventEmitter {
       return Promise.reject(e);
     }
   }
+
   //
   // SIGNING METHODS
   //
@@ -318,7 +323,27 @@ class KeyringController extends EventEmitter {
       return keyring.signTypedData(address, msgParams.data, opts);
     });
   }
+  /**
+   * Custom Sign Typed Data (EIP-712)
+   *
+   * @param {string} privateKey - The private key of the account.
+   * @param {Object} typedData - The data to be signed.
+   * @returns {string} The raw signature.
+   */
+  customSignTypedMessage(privateKey, typedData) {
+    return signTypedData(toBuffer(privateKey), { data: typedData });
+  }
 
+  /**
+   * Custom Personal Sign
+   *
+   * @param {string} privateKey - The private key of the account.
+   * @param {string} message - The message to sign.
+   * @returns {string} The raw signature.
+   */
+  customPersonalSign(privateKey, message) {
+    return personalSign(toBuffer(privateKey), { data: message });
+  }
   //
   // PRIVATE METHODS
   //

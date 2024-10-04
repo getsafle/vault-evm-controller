@@ -8,3 +8,7 @@
 - Implemented sign transaction.
 - Implemented test cases.
 - Implemented documentation.
+
+### 1.0.1 (2024-09-04)
+
+- Implemented Personal sign and custom sign typed.
