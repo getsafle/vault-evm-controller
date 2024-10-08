@@ -326,7 +326,23 @@ describe("EVM Controller Tests", () => {
         );
         assert(rawSignature, `Failed to Sign Message for ${chainName}`);
       });
+      it(`Should sign Message for ${chainName}`, async () => {
+        const accounts = await chainController.getAccounts();
+        const message = `Hello, ${chainName}!`;
 
+        const hash = crypto.createHash("sha256").update(message).digest();
+        const hexData = web3.utils.toHex(hash);
+
+        const msgParams = {
+          from: accounts[0],
+          data: hexData,
+        };
+
+        const raw_sign = await chainController.signMessage(msgParams);
+        // console.log(raw_sign);
+
+        assert(raw_sign, `Failed to Sign Message for ${chainName}`);
+      });
       it(`Should sign message using customPersonalSign for ${chainName}`, async () => {
         const accounts = await chainController.getAccounts();
         const message = `Hello, ${chainName}!`;
