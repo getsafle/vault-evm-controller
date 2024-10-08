@@ -90,6 +90,18 @@ const signedObj = await evmController.sign(msgParams, pvtKey, web3Obj);
 const signedData = await evmController.signTypedMessage(msgParams);
 ```
 
+### Custom Sign Typed Data (EIP-712)
+
+```
+const signedData = await evmController.customSignTypedMessage(privateKey, typedData);
+```
+
+### Custom Personal sign
+
+```
+const signedData = await evmController.customPersonalSign(privateKey, messafe);
+```
+
 ### Get balance
 
 ```

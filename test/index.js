@@ -18,39 +18,39 @@ const PASSWORD = "random_password";
 
 const NETWORKS = {
   ethereum: {
-    URL: "https://eth.llamarpc.com",
-    CHAIN_ID: 1,
+    URL: "https://sepolia.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
+    CHAIN_ID: 11155111,
   },
   bsc: {
-    URL: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+    URL: "https://bsc-testnet.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
     CHAIN_ID: 97,
   },
   polygon: {
-    URL: "https://polygon-amoy-bor-rpc.publicnode.com",
-    CHAIN_ID: 80001,
+    URL: "https://polygon-amoy.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
+    CHAIN_ID: 80002,
   },
   optimism: {
-    URL: "https://optimism.llamarpc.com",
-    CHAIN_ID: 10,
+    URL: "https://optimism-sepolia.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
+    CHAIN_ID: 11155420,
   },
   arbitrum: {
-    URL: "https://sepolia-rollup.arbitrum.io/rpc",
+    URL: "https://arbitrum-sepolia.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
     CHAIN_ID: 421614,
   },
   mantle: {
-    URL: "https://rpc.mantle.xyz",
-    CHAIN_ID: 5001,
+    URL: "https://mantle-sepolia.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
+    CHAIN_ID: 5003,
   },
-  velas: {
-    URL: "https://explorer.testnet.velas.com/rpc",
-    CHAIN_ID: 111,
-  },
+  // velas: {
+  //   URL: "https://explorer.testnet.velas.com/rpc",
+  //   CHAIN_ID: 111,
+  // },
   avalanche: {
-    URL: "https://api.avax-test.network/ext/bc/C/rpc",
+    URL: "https://avalanche-fuji.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
     CHAIN_ID: 43113,
   },
   base: {
-    URL: "https://base-sepolia.blockpi.network/v1/rpc/public",
+    URL: "https://base-sepolia.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
     CHAIN_ID: 84532,
   },
   zkEVM: {
@@ -74,7 +74,7 @@ const chainConfigs = {
   optimism: { symbol: "OP", txType: 2 },
   arbitrum: { symbol: "ARB", txType: 2 },
   mantle: { symbol: "MNT", txType: 2 },
-  velas: { symbol: "VLX", txType: 0 },
+  // velas: { symbol: "VLX", txType: 0 },
   avalanche: { symbol: "AVAX", txType: 2 },
   base: { symbol: "BASE", txType: 2 },
   zkEVM: { symbol: "ZKEVM", txType: 2 },

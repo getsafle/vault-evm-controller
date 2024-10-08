@@ -33,18 +33,20 @@ class KeyringController extends EventEmitter {
     this.keyringTypes = opts.keyringTypes
       ? keyringTypes.concat(opts.keyringTypes)
       : keyringTypes;
-    this.store = new ObservableStore(initState);
-    this.memStore = new ObservableStore({
-      isUnlocked: false,
-      keyringTypes: this.keyringTypes.map((krt) => krt.type),
-      keyrings: [],
-    });
+    this.store = opts.persistStore || new ObservableStore(initState);
+    this.memStore =
+      opts.persistmemStore ||
+      new ObservableStore({
+        isUnlocked: false,
+        keyringTypes: this.keyringTypes.map((krt) => krt.type),
+        keyrings: [],
+      });
     this.txType = opts.txType;
 
     this.encryptor = opts.encryptor || encryptor;
-    this.keyrings = [];
+    this.keyrings = opts.persistKeyrings || [];
     this.getNetwork = opts.getNetwork;
-    this.importedWallets = [];
+    this.importedWallets = opts.persistImported || [];
   }
 
   /**

@@ -9,6 +9,9 @@
 - Implemented test cases.
 - Implemented documentation.
 
-### 1.0.1 (2024-09-04)
+### 1.0.1 (2024-10-08)
 
 - Implemented Personal sign and custom sign typed.
+- Added controller state persistance on evm network change.
+- Updating docs by adding custom sign typed and personal sign methods
+- Changing rpc's in tests
