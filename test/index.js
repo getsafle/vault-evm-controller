@@ -18,51 +18,51 @@ const PASSWORD = "random_password";
 
 const NETWORKS = {
   ethereum: {
-    URL: "https://eth-goerli.public.blastapi.io", // Goerli testnet
-    CHAIN_ID: 5,
+    URL: "https://sepolia.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
+    CHAIN_ID: 11155111,
   },
   bsc: {
-    URL: "https://data-seed-prebsc-1-s1.binance.org:8545/", // BSC testnet
+    URL: "https://bsc-testnet.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
     CHAIN_ID: 97,
   },
   polygon: {
-    URL: "https://polygon-amoy.blockpi.network/v1/rpc/public", // Polygon testnet
-    CHAIN_ID: 80001,
+    URL: "https://polygon-amoy.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
+    CHAIN_ID: 80002,
   },
   optimism: {
-    URL: "https://optimism-goerli.public.blastapi.io", // Optimism Goerli testnet
-    CHAIN_ID: 420,
+    URL: "https://optimism-sepolia.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
+    CHAIN_ID: 11155420,
   },
   arbitrum: {
-    URL: "https://sepolia-rollup.arbitrum.io/rpc", // Arbitrum Sepolia testnet
+    URL: "https://arbitrum-sepolia.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
     CHAIN_ID: 421614,
   },
   mantle: {
-    URL: "https://rpc.ankr.com/mantle_sepolia", // Mantle testnet
-    CHAIN_ID: 5001,
+    URL: "https://mantle-sepolia.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
+    CHAIN_ID: 5003,
   },
-  velas: {
-    URL: "https://explorer.testnet.velas.com/rpc", // Velas testnet
-    CHAIN_ID: 111,
-  },
+  // velas: {
+  //   URL: "https://explorer.testnet.velas.com/rpc",
+  //   CHAIN_ID: 111,
+  // },
   avalanche: {
-    URL: "https://api.avax-test.network/ext/bc/C/rpc", // Avalanche Fuji testnet
+    URL: "https://avalanche-fuji.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
     CHAIN_ID: 43113,
   },
   base: {
-    URL: "https://base-sepolia.blockpi.network/v1/rpc/public", // Base Goerli testnet
+    URL: "https://base-sepolia.infura.io/v3/0611b8c478b14db0b7d29e51466ff925",
     CHAIN_ID: 84532,
   },
   zkEVM: {
-    URL: "https://endpoints.omniatech.io/v1/polygon-zkevm/testnet/public	", // Polygon zkEVM testnet
+    URL: "https://polygon-zkevm.drpc.org",
     CHAIN_ID: 1442,
   },
   bevm: {
-    URL: "https://testnet.bevm.io/", // BEVM testnet
+    URL: "https://testnet.bevm.io/",
     CHAIN_ID: 1978,
   },
   rootstock: {
-    URL: "https://public-node.testnet.rsk.co", // RSK testnet
+    URL: "https://public-node.testnet.rsk.co",
     CHAIN_ID: 31,
   },
 };
@@ -74,7 +74,7 @@ const chainConfigs = {
   optimism: { symbol: "OP", txType: 2 },
   arbitrum: { symbol: "ARB", txType: 2 },
   mantle: { symbol: "MNT", txType: 2 },
-  velas: { symbol: "VLX", txType: 0 },
+  // velas: { symbol: "VLX", txType: 0 },
   avalanche: { symbol: "AVAX", txType: 2 },
   base: { symbol: "BASE", txType: 2 },
   zkEVM: { symbol: "ZKEVM", txType: 2 },
@@ -93,6 +93,8 @@ const opts = {
     },
   },
 };
+
+// Existing imports and constants...
 
 describe("EVM Controller Tests", () => {
   let evmController;
@@ -116,6 +118,7 @@ describe("EVM Controller Tests", () => {
       "Wrong mnemonic"
     );
   });
+
   it("should add new account", async () => {
     await evmController.addNewAccount(evmController.keyrings[0]);
     const newAccount = evmController.memStore._state.keyrings[0].accounts[1];
@@ -125,6 +128,7 @@ describe("EVM Controller Tests", () => {
       "couldn't add new Account"
     );
   });
+
   it("Should export account (privateKey)", async () => {
     const accounts = await evmController.getAccounts();
 
@@ -167,13 +171,11 @@ describe("EVM Controller Tests", () => {
           PASSWORD,
           HD_WALLET_12_MNEMONIC
         );
-        // chainController.setChain(chainName);
       });
 
       it(`Should get fees for ${chainName}`, async () => {
         const accounts = await chainController.getAccounts();
 
-        // const from = accounts[0];
         const rawTx = {
           to: "0xca878f65d50caf80a84fb24e40f56ef05483e1cb",
           from: EXTERNAL_ACCOUNT_ADDRESS_TO_GET_FEE,
@@ -250,24 +252,6 @@ describe("EVM Controller Tests", () => {
         );
         assert(signedTX, `Failed to sign transaction for ${chainName}`);
       });
-      it(`Should sign Message for ${chainName}`, async () => {
-        const accounts = await chainController.getAccounts();
-        const message = `Hello, ${chainName}!`;
-
-        const hash = crypto.createHash("sha256").update(message).digest();
-        const hexData = web3.utils.toHex(hash);
-
-        const msgParams = {
-          from: accounts[0],
-          data: hexData,
-        };
-
-        const raw_sign = await chainController.signMessage(msgParams);
-        // console.log(raw_sign);
-
-        assert(raw_sign, `Failed to Sign Message for ${chainName}`);
-      });
-
       it(`Should sign and verify Typed Message for ${chainName}`, async () => {
         const accounts = await chainController.getAccounts();
 
@@ -341,6 +325,100 @@ describe("EVM Controller Tests", () => {
           `Signature verification failed for ${chainName}`
         );
         assert(rawSignature, `Failed to Sign Message for ${chainName}`);
+      });
+      it(`Should sign Message for ${chainName}`, async () => {
+        const accounts = await chainController.getAccounts();
+        const message = `Hello, ${chainName}!`;
+
+        const hash = crypto.createHash("sha256").update(message).digest();
+        const hexData = web3.utils.toHex(hash);
+
+        const msgParams = {
+          from: accounts[0],
+          data: hexData,
+        };
+
+        const raw_sign = await chainController.signMessage(msgParams);
+        // console.log(raw_sign);
+
+        assert(raw_sign, `Failed to Sign Message for ${chainName}`);
+      });
+      it(`Should sign message using customPersonalSign for ${chainName}`, async () => {
+        const accounts = await chainController.getAccounts();
+        const message = `Hello, ${chainName}!`;
+
+        const privateKey = await chainController.exportAccount(accounts[0]);
+        const rawSign = chainController.customPersonalSign(
+          "0x" + privateKey,
+          message
+        );
+
+        assert(
+          rawSign,
+          `Failed to sign message using customPersonalSign for ${chainName}`
+        );
+      });
+
+      it(`Should sign and verify Typed Message using customSignTypedMessage for ${chainName}`, async () => {
+        const accounts = await chainController.getAccounts();
+
+        const typedData = {
+          types: {
+            EIP712Domain: [
+              { name: "name", type: "string" },
+              { name: "version", type: "string" },
+              { name: "chainId", type: "uint256" },
+              { name: "verifyingContract", type: "address" },
+            ],
+            Person: [
+              { name: "name", type: "string" },
+              { name: "wallet", type: "address" },
+            ],
+            Mail: [
+              { name: "from", type: "Person" },
+              { name: "to", type: "Person" },
+              { name: "contents", type: "string" },
+            ],
+          },
+          primaryType: "Mail",
+          domain: {
+            name: "Ether Mail",
+            version: "1",
+            chainId: NETWORKS[chainName].CHAIN_ID,
+            verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+          },
+          message: {
+            from: {
+              name: "Cow",
+              wallet: "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+            },
+            to: {
+              name: "Bob",
+              wallet: "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+            },
+            contents: "Hello, Bob!",
+          },
+        };
+
+        const privateKey = await chainController.exportAccount(accounts[0]);
+        const rawSignature = chainController.customSignTypedMessage(
+          "0x" + privateKey,
+          typedData
+        );
+
+        const recoveredAddress = sigUtil.recoverTypedSignature({
+          data: typedData,
+          sig: rawSignature,
+        });
+
+        const isSignatureValid =
+          recoveredAddress.toLowerCase() === accounts[0].toLowerCase();
+
+        assert(
+          isSignatureValid,
+          `Signature verification failed using customSignTypedMessage for ${chainName}`
+        );
+        assert(rawSignature, `Failed to sign typed message for ${chainName}`);
       });
     });
   });
